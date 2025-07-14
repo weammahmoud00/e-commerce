@@ -16,7 +16,7 @@ export default function WishlistContextProvider(props) {
         },
       })
       .then((response) => {
-        console.log("Get wishlist response:", response.data);
+        // console.log("Get wishlist response:", response.data);
         setWishlistItems(response.data.data || []);
         setWishlistCount(response.data.count || 0);
         return response.data;

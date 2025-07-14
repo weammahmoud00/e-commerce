@@ -29,7 +29,7 @@ import ForgetPass from "./pages/ForgetPass/ForgetPass";
 import ResetPassword from "./components/ResetPassword/ResetPassword";
 import UpdatePass from "./components/UpdatePass/UpdatePass";
 import UpdateUserData from "./components/UpdateUserData/UpdateUserData";
-// import UserOrders from './pages/UserOrders/UserOrders'
+import UserOrders from './pages/UserOrders/UserOrders'
 // import UserOrdersContextProvider from './components/contexts/UserOrderscontext'
 
 let queryClient = new QueryClient();
@@ -103,7 +103,7 @@ const routes = createBrowserRouter([
       { path: "resetPassword", element:<Protected><ResetPassword /></Protected>  },
       { path: "updatePass", element:<Protected><UpdatePass /></Protected>  },
       { path: "updateUserData", element:<Protected><UpdateUserData values={{ name }} /></Protected>  },
-      // {path: "userOrdedrs", element: <UserOrders/> },
+      {path: "userOrders", element: <UserOrders/> },
       { path: "*", element: <NotFound /> },
     ],
   },
@@ -117,7 +117,7 @@ function App() {
         <UserContextProvider>
           <ForgetPassContextProvider>
             <WishlistContextProvider>
-              <CartContextProvider>
+              <CartContextProvider >
                 <CounterContextProvider>
                   <RouterProvider router={routes} />
                   <Toaster />

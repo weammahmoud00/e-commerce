@@ -10,43 +10,19 @@ import { getUserId, getUserInfo, getAuthHeaders } from "../../utils/auth";
 import JWTDebugger from "../../components/JWTDebugger/JWTDebugger";
 import { jwtDecode } from "jwt-decode";
 import { ForgetPassContext } from "../../components/contexts/ForgetPassContext";
+import { CartContext } from "../../components/contexts/CartContext";
 
 export default function Personal() {
   let { setUserLogin } = useContext(UserContext);
   let { wishlistCount } = useContext(WishlistContext);
-  let { name,email } = useContext(ForgetPassContext);
+  let { name, email } = useContext(ForgetPassContext);
+  let { numOfUserOrder, fetchUserOrders } = useContext(CartContext);
   let [userName, setUserName] = useState(null);
   let [userId, setUserId] = useState(null);
   // let [userEmail, setUserEmail] = useState(null);
   const navigate = useNavigate();
 
-
-// async function handleUpdatePass(currentPassword, password, rePassword) {
-//     try {
-//       let response = await fetchUpdatePassword(currentPassword, password, rePassword);
-//       console.log("Update user logged password response:", response?.data);
-
-//       if (response?.data?.status === "success") {
-//         navigate("/personal");
-//         return response;
-//       } else {
-//         setErrMsg(response?.data?.message || "Invalid or expired reset code");
-//         return null;
-//       }
-//     } catch (error) {
-//       console.error(
-//         "Update user logged passworderror:",
-//         error?.response?.data || error.message
-//       );
-//       setErrMsg(
-//         error?.response?.data?.message || "Failed to verify reset code"
-//       );
-//       return null;
-//     }
-//   }
-
-
-
+  console.log("Number of user orders kkkkkkkkkkkkkkkkk:", numOfUserOrder);
 
   const getUserIdFromJWT = () => {
     try {
@@ -62,21 +38,48 @@ export default function Personal() {
       const payload = jwtDecode(token);
       // console.log("JWT Payload:", payload);
 
-      setUserId(payload.id)
+      setUserId(payload.id);
       setUserName(payload.name);
       // setUserEmail(payload.email);
-      // console.log("User ID :", userId);
-      
-      return userId;
+      // console.log("User ID :", payload.id);
+
+      return payload.id;
     } catch (error) {
       console.error("Error with jwt library:", error);
       return null;
     }
   };
 
+  const handleUserOrdersCount = async () => {
+    try {
+      setLoading(true);
+      const userId = getUserIdFromJWT();
+      if (!userId) {
+        console.log("No user ID found");
+        return;
+      }
+
+      const response = await fetchUserOrders(userId);
+
+      console.log("Personal Personal Orders response in Personal:", response.data);
+      const orderCount = response.data?.length || 0;
+
+      setStats((prevStats) => ({
+        ...prevStats,
+        totalOrders: orderCount,
+        wishlistItems: wishlistCount || 0,
+      }));
+
+      console.log("order count:", orderCount);
+    } catch (error) {
+      console.error(" Error fetching orders count:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const [userOrders, setUserOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
-  
+  const [loading, setLoading] = useState(false);
 
   const [stats, setStats] = useState({
     totalOrders: 0,
@@ -85,55 +88,11 @@ export default function Personal() {
     memberSince: "2023",
   });
 
-  // async function getUserOrders() {
-  //   try {
-  //     setLoading(true);
-
-  //     const userId = getUserIdFromJWT();
-  //     if (!userId) {
-  //       // console.error(" No user ID found - cannot fetch orders");
-  //       setLoading(false);
-  //       return;
-  //     }
-
-  //     console.log(" Fetching orders for user ID:", userId);
-
-  //     const response = await axios.get(
-  //       `https://ecommerce.routemisr.com/api/v1/orders/user/${userId}`,
-  //       {
-  //         headers: {
-  //           token: localStorage.getItem("userToken"),
-  //         },
-  //       }
-  //     );
-
-  //     const orders = response?.data?.data || [];
-  //     setUserOrders(orders);
-
-  //     const totalSpent = orders.reduce(
-  //       (sum, order) => sum + (order.totalOrderPrice || 0),
-  //       0
-  //     );
-
-  //     setStats((prev) => ({
-  //       ...prev,
-  //       totalOrders: orders.length,
-  //       totalSpent: totalSpent,
-  //     }));
-
-  //     console.log("User orders:", orders);
-  //     setLoading(false);
-  //     return orders;
-  //   } catch (error) {
-  //     console.error("Error fetching user orders:", error);
-  //     setLoading(false);
-  //     return [];
-  //   }
-  // }
-
   useEffect(() => {
-    // getUserOrders();
-  }, [{name, email}]);
+    if (localStorage.getItem("userToken")) {
+      handleUserOrdersCount();
+    }
+  }, [wishlistCount]);
 
   const handleLogout = () => {
     localStorage.removeItem("userToken");
@@ -163,7 +122,7 @@ export default function Personal() {
             </div>
           </div>
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
-            Welcome back, 
+            Welcome back,
             {name}!
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-400">
@@ -182,7 +141,7 @@ export default function Personal() {
                   <div className="w-16 h-8 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
                 ) : (
                   <p className="text-3xl font-bold text-gray-900 dark:text-white">
-                    {stats.totalOrders}
+                     {numOfUserOrder}
                   </p>
                 )}
               </div>
@@ -263,8 +222,6 @@ export default function Personal() {
               </div>
             </div>
           </div>
-
-          
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
@@ -275,9 +232,7 @@ export default function Personal() {
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-2xl font-bold mb-2">All Orders</h3>
-                <p className="text-green-100">
-                  View your order history
-                </p>
+                <p className="text-green-100">View your order history</p>
               </div>
               <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center group-hover:bg-white/30 transition-colors">
                 <svg
@@ -326,13 +281,18 @@ export default function Personal() {
             </div>
           </Link>
         </div>
-        
+
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
           <div className="p-8 relative">
             <div className="absolute top-3 right-3 flex ">
-            <button 
-            onClick={() => navigate("/updateUserData", { state: { name, email } })}
-            className="bg-green-600 cursor-pointer rounded px-4 text-white hover:bg-green-400 duration-300 ">Edit</button>
+              <button
+                onClick={() =>
+                  navigate("/updateUserData", { state: { name, email } })
+                }
+                className="bg-green-600 cursor-pointer rounded px-4 text-white hover:bg-green-400 duration-300 "
+              >
+                Edit
+              </button>
             </div>
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center space-x-3">

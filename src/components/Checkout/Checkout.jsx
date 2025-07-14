@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import axios from "axios";
@@ -6,10 +6,40 @@ import { CartContext } from "../contexts/CartContext";
 import toast from "react-hot-toast";
 
 export default function Checkout() {
+  let [online, setOnline] = useState(true);
   const navigate = useNavigate();
   const { cartId, totalCartPrice, numOfCartItems, products } =
     useContext(CartContext);
   //   console.log(cartId);
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const success = urlParams.get("success");
+    const canceled = urlParams.get("canceled");
+
+    if (success === "true") {
+      toast.success("Payment completed successfully!");
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
+    } else if (canceled === "true") {
+      toast.error("Payment was canceled");
+      setTimeout(() => {
+        navigate("/");
+      }, 1500);
+    }
+  }, [navigate]);
+
+  function detectPayMethod(val) {
+    console.log("detectPayMethod called with:", val);
+    console.log("online state:", online);
+
+    if (online) {
+      payOnline(val);
+    } else {
+      payCach(val);
+    }
+  }
 
   function payCach(val) {
     axios
@@ -38,7 +68,6 @@ export default function Checkout() {
               numOfCartItems,
               products,
             },
-            
           };
 
           navigate("/checkoutDetails", {
@@ -48,6 +77,38 @@ export default function Checkout() {
       })
       .catch((error) => {
         console.error("Pay now error:", error);
+      });
+  }
+
+  function payOnline(val) {
+    console.log("payOnline function called with:", val);
+    console.log("cartId:", cartId);
+    console.log("userToken:", localStorage.getItem("userToken"));
+
+    axios
+      .post(
+        `https://ecommerce.routemisr.com/api/v1/orders/checkout-session/${cartId}?url=http://localhost:5174/checkout?success=true&canceled=false`,
+        {
+          shippingAddress: val,
+        },
+        {
+          headers: {
+            token: localStorage.getItem("userToken"),
+          },
+        }
+      )
+      .then((response) => {
+        console.log("Pay online response:", response.data);
+        if (response?.data?.status === "success") {
+          console.log(response.data.session.url);
+          toast.success("Order placed successfully");
+          const checkoutUrl = response.data.session.url;
+          window.location.href = checkoutUrl;
+        }
+      })
+      .catch((error) => {
+        console.error("Pay online error:", error);
+        console.error("Error details:", error.response?.data);
       });
   }
   //  const onSubmit = async (values) => {
@@ -77,7 +138,7 @@ export default function Checkout() {
       city: "",
     },
 
-    onSubmit: payCach,
+    onSubmit: detectPayMethod,
   });
 
   // function handlePayNow(){
@@ -152,15 +213,26 @@ export default function Checkout() {
                 </div>
               </div>
 
-              <div className="flex justify-center mt-8">
+              <div className="flex justify-between mt-8">
                 <button
                   onClick={() => {
+                    setOnline(false);
                     navigate("/checkoutDetails");
                   }}
                   type="submit"
                   className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg transition-colors"
                 >
-                  Pay Now
+                  Pay cash
+                </button>
+
+                <button
+                  onClick={() => {
+                    setOnline(true);
+                  }}
+                  type="submit"
+                  className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg transition-colors"
+                >
+                  Pay online
                 </button>
               </div>
             </form>

@@ -16,6 +16,8 @@ export default function Cart() {
   } = useContext(CartContext);
   // console.log("Cart products:", products);
 
+  
+
   async function handleUpdateCart(prodId, count) {
     if (count <= 0) {
       console.log("Deleting item");
