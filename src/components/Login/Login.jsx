@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { UserContext } from "../contexts/UserContext";
 
-export default function Register() {
+export default function Login() {
   let { setUserLogin } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();

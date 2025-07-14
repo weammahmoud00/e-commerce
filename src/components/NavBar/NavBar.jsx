@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import logo from "../../../assets/images/freshcart-logo.svg";
+// Logo is now in public folder, referenced directly
 import { NavLink, useNavigate } from "react-router-dom";
 import { CounterContext } from "../contexts/CounterContext";
 import { UserContext } from "../contexts/UserContext";
@@ -22,7 +22,7 @@ export default function NavBar() {
       <nav className="bg-slate-100 p-2 fixed top-0 end-0 start-0 z-40">
         <div className="container max-w-6xl mx-auto flex flex-row justify-between items-center">
           <div className="flex items-center py-4">
-            <img width={130} src={logo} alt="" />
+            <img width={130} src="/freshcart-logo.svg" alt="FreshCart Logo" />
           </div>
 
           <button
@@ -80,7 +80,7 @@ export default function NavBar() {
                       }}
                       className="cursor-pointer"
                     >
-                      <i class="fa-solid fa-user"></i>
+                      <i className="fa-solid fa-user"></i>
                     </li>
                     <li
                       className="mt-2 md:mt-0 ms-5"
