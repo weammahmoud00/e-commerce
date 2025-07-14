@@ -6,37 +6,45 @@ import * as Yup from "yup";
 import { UserContext } from "../contexts/UserContext";
 
 export default function Register() {
-  
-  let {setUserLogin}=useContext(UserContext);
-  const [loading,setLoading] = useState(false)
-  const navigate = useNavigate()
-  const [errMsg,setErrMsg] = useState(null)
+  let { setUserLogin } = useContext(UserContext);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const [errMsg, setErrMsg] = useState(null);
   const onSubmit = async (values) => {
     setLoading(true);
-      axios.post(
-      "https://ecommerce.routemisr.com/api/v1/auth/signup",
-      values
-    ).then(({data}) => {
-      setLoading(false);
-      console.log(data);
-      if(data?.message === "success") {
-        setUserLogin(data?.token);
-        localStorage.setItem("userToken", data?.token);
-        navigate("/");
-      }
-    }).catch ((error) => {
-      setLoading(false);
-      console.log(error?.response?.data?.message);
-      setErrMsg(error?.response?.data?.message);
-    })
+    axios
+      .post("https://ecommerce.routemisr.com/api/v1/auth/signup", values)
+      .then(({ data }) => {
+        setLoading(false);
+        console.log(data);
+        if (data?.message === "success") {
+          setUserLogin(data?.token);
+          localStorage.setItem("userToken", data?.token);
+          navigate("/home");
+        }
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error?.response?.data?.message);
+        setErrMsg(error?.response?.data?.message);
+      });
   };
 
   let validationSchema = Yup.object().shape({
-    name: Yup.string().required('name is req').min(3, 'min 3 letters').max(6, 'max 6 letters'),
-email: Yup.string().required('email is req').email('invalid email'),
-password: Yup.string().required('password is required').matches(/^[A-Z][a-z0-9]{4,10}$/, 'invalid password'),
-rePassword: Yup.string().required('rePassword req').oneOf([Yup.ref('password')]),
-phone: Yup.string().required('phone is req').matches(/^01[0125][0-9]{8}$/, 'invalid phone')
+    name: Yup.string()
+      .required("name is req")
+      .min(3, "min 3 letters")
+      .max(6, "max 6 letters"),
+    email: Yup.string().required("email is req").email("invalid email"),
+    password: Yup.string()
+      .required("password is required")
+      .matches(/^[A-Z][a-z0-9]{4,10}$/, "invalid password"),
+    rePassword: Yup.string()
+      .required("rePassword req")
+      .oneOf([Yup.ref("password")]),
+    phone: Yup.string()
+      .required("phone is req")
+      .matches(/^01[0125][0-9]{8}$/, "invalid phone"),
   });
 
   const formik = useFormik({
@@ -50,7 +58,6 @@ phone: Yup.string().required('phone is req').matches(/^01[0125][0-9]{8}$/, 'inva
     validationSchema,
     onSubmit: onSubmit,
   });
-
 
   // function validateInput(values) {
   //   let errors = {};
@@ -272,13 +279,15 @@ phone: Yup.string().required('phone is req').matches(/^01[0125][0-9]{8}$/, 'inva
                   type="submit"
                   className="flex w-full justify-center rounded-md border border-transparent bg-green-500 text-white py-2 px-4 text-sm font-medium shadow-sm  focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
                 >
-                  {loading?
-                  <i className="fas fa-spinner fa-spin mr-2"></i> : "Register Account" }
-                
+                  {loading ? (
+                    <i className="fas fa-spinner fa-spin mr-2"></i>
+                  ) : (
+                    "Register Account"
+                  )}
                 </button>
               </div>
 
-              {errMsg? (
+              {errMsg ? (
                 <div className="bg-red-200 px-6 py-4 mx-2 my-4 rounded-md text-lg flex items-center mx-auto max-w-lg">
                   <svg
                     viewBox="0 0 24 24"

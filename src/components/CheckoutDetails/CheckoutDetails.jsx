@@ -59,7 +59,7 @@ export default function CheckoutDetails() {
               <span>View Cart</span>
             </button>
             <button
-              onClick={() => navigate("/")}
+              onClick={() => navigate("/home")}
               className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 px-8 py-4 rounded-lg font-semibold transition-colors flex items-center justify-center space-x-2"
             >
               <svg
@@ -110,7 +110,7 @@ export default function CheckoutDetails() {
             The order information appears to be incomplete or corrupted.
           </p>
           <button
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/home")}
             className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-medium transition-colors"
           >
             Return to Home
@@ -273,10 +273,10 @@ export default function CheckoutDetails() {
                 onClick={async () => {
                   try {
                     await ClearCart();
-                    navigate("/");
+                    navigate("/home");
                   } catch (error) {
                     console.error("Error clearing cart:", error);
-                    navigate("/");
+                    navigate("/home");
                   }
                 }}
                 className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-medium transition-colors"
