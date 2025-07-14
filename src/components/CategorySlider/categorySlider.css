@@ -1,0 +1,5 @@
+.slick-dots li button:before {
+  color: #6e6e6e; /* Example: green */
+  font-size: 12px;
+  width: 20px !important;
+}
