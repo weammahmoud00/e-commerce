@@ -10,7 +10,8 @@ export default function UserOrders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  let {numOfUserOrder, setNumOfUserOrder, fetchUserOrders}=useContext(CartContext);
+  let { numOfUserOrder, setNumOfUserOrder, fetchUserOrders } =
+    useContext(CartContext);
 
   const getUserIdFromJWT = () => {
     try {
@@ -47,11 +48,15 @@ export default function UserOrders() {
 
       const response = await fetchUserOrders(userId);
 
-      console.log("User Orders page response:", response.data);
-      setNumOfUserOrder(response.data.length);
-      console.log("Number of user orders:", response.data.length);
-      
-      
+      console.log("User Orders page response:", response);
+      if (response && response.length) {
+        setOrders(response);
+        setNumOfUserOrder(response.length);
+        console.log("Number of user orders:", response.length);
+      } else {
+        setOrders([]);
+        setNumOfUserOrder(0);
+      }
     } catch (error) {
       console.error("Error fetching orders:", error);
       setError(error.response?.data?.message || "Failed to fetch orders");
@@ -62,7 +67,7 @@ export default function UserOrders() {
   };
 
   useEffect(() => {
-    fetchUserOrders();
+    handleUserOrders();
   }, []);
 
   const formatDate = (dateString) => {
@@ -74,8 +79,6 @@ export default function UserOrders() {
       minute: "2-digit",
     });
   };
-
- 
 
   if (loading) {
     return (
@@ -106,7 +109,7 @@ export default function UserOrders() {
       </div>
     );
   }
-  console.log(error ,"aaaaaaaaaaaaaaaaahhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
+  console.log(error, "aaaaaaaaaaaaaaaaahhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
 
   if (error) {
     return (
@@ -137,7 +140,7 @@ export default function UserOrders() {
               </h3>
               <p className="text-red-600 mb-4">{error}</p>
               <button
-                onClick={fetchUserOrders}
+                onClick={handleUserOrders}
                 className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors"
               >
                 Try Again
@@ -148,7 +151,6 @@ export default function UserOrders() {
       </div>
     );
   }
-  
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4 sm:px-6 lg:px-8">
@@ -207,7 +209,7 @@ export default function UserOrders() {
               You haven't placed any orders yet.
             </p>
             <Link
-              to="/"
+              to="/home"
               className="inline-flex items-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors"
             >
               <svg
@@ -247,7 +249,6 @@ export default function UserOrders() {
                       <p className="text-2xl font-bold text-gray-900 dark:text-white">
                         {order.totalOrderPrice} EGP
                       </p>
-                      
                     </div>
                   </div>
 

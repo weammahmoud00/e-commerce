@@ -221,7 +221,7 @@ export default function Cart() {
                   <div className="p-6 flex justify-between border-t border-gray-200 dark:border-gray-700">
                     <button
                       onClick={() => {
-                        navigate("/");
+                        navigate("/home");
                       }}
                       className="inline-flex items-center px-6 py-3 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-medium rounded-lg transition-colors"
                     >
@@ -345,7 +345,7 @@ export default function Cart() {
                   Looks like you haven't added any items to your cart yet.
                 </p>
                 <button
-                  onClick={() => navigate("/")}
+                  onClick={() => navigate("/home")}
                   className="inline-flex items-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors"
                 >
                   <svg

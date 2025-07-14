@@ -20,12 +20,12 @@ export default function Checkout() {
     if (success === "true") {
       toast.success("Payment completed successfully!");
       setTimeout(() => {
-        navigate("/");
+        navigate("/home");
       }, 2000);
     } else if (canceled === "true") {
       toast.error("Payment was canceled");
       setTimeout(() => {
-        navigate("/");
+        navigate("/home");
       }, 1500);
     }
   }, [navigate]);

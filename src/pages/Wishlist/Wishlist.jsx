@@ -171,7 +171,7 @@ export default function Wishlist() {
               Start adding items to your wishlist to see them here.
             </p>
             <button
-              onClick={() => navigate("/")}
+              onClick={() => navigate("/home")}
               className="inline-flex items-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors"
             >
               <svg

@@ -90,8 +90,8 @@ export default function CartContextProvider(props) {
       })
       .then((response) => {
         getUserCart();
-          console.log("deleeeeeteddddddddd");
-          
+        console.log("deleeeeeteddddddddd");
+
         return response.data;
       })
       .catch((error) => {
@@ -117,17 +117,14 @@ export default function CartContextProvider(props) {
       });
   }
 
-
-
-const fetchUserOrders = async (userId) => {
-      return  await axios.get(
-        `https://ecommerce.routemisr.com/api/v1/orders/user/${userId}`,
-        {
-          headers: {
-            token: localStorage.getItem("userToken"),
-          },
-        }
-      ).then((response) => {
+  const fetchUserOrders = async (userId) => {
+    return await axios
+      .get(`https://ecommerce.routemisr.com/api/v1/orders/user/${userId}`, {
+        headers: {
+          token: localStorage.getItem("userToken"),
+        },
+      })
+      .then((response) => {
         console.log("Orders response:", response.data);
         setNumOfUserOrder(response.data.length);
         console.log("Number of user orders:", response.data.length);
@@ -137,8 +134,7 @@ const fetchUserOrders = async (userId) => {
         console.error("Error fetching orders:", error);
         return error;
       });
-    };
-
+  };
 
   useEffect(() => {
     if (token) {
@@ -158,7 +154,7 @@ const fetchUserOrders = async (userId) => {
         cartId,
         totalCartPrice,
         numOfCartItems,
-        numOfUserOrder, 
+        numOfUserOrder,
         setNumOfUserOrder,
       }}
     >
